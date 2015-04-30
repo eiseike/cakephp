@@ -142,6 +142,41 @@ class XmlViewTest extends TestCase
     }
 
     /**
+     * Test that rendering with _serialize errors when using string for '_serialize'
+     *
+     * @expectedException Exception
+     * @return void
+     */
+    public function testRenderSerializeWithStringError()
+    {
+        $Request = new Request();
+        $Response = new Response();
+        $Controller = new Controller($Request, $Response);
+        $Controller->set([
+            '_serialize' => 'tags',
+            '_xmlOptions' => ['format' => 'attributes'],
+            'tags' => [
+                'tag' => [
+                    [
+                        'id' => '1',
+                        'name' => 'defect'
+                    ],
+                    [
+                        'id' => '2',
+                        'name' => 'enhancement'
+                    ]
+                ]
+            ]
+        ]);
+        $Controller->viewClass = 'Xml';
+        $View = $Controller->createView();
+        $result = $View->render();
+
+        $expected = '<tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags>';
+        $this->assertContains($expected, $result);
+    }
+
+    /**
      * Test render with an array in _serialize
      *
      * @return void
