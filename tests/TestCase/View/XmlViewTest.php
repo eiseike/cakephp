@@ -117,63 +117,66 @@ class XmlViewTest extends TestCase
         $Request = new Request();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
-        $Controller->set([
+        $data = [
             '_serialize' => ['tags'],
             '_xmlOptions' => ['format' => 'attributes'],
             'tags' => [
-                'tag' => [
-                    [
-                        'id' => '1',
-                        'name' => 'defect'
-                    ],
-                    [
-                        'id' => '2',
-                        'name' => 'enhancement'
+                    'tag' => [
+                        [
+                            'id' => '1',
+                            'name' => 'defect'
+                        ],
+                        [
+                            'id' => '2',
+                            'name' => 'enhancement'
+                        ]
                     ]
-                ]
             ]
-        ]);
+        ];
+        $Controller->set($data);
         $Controller->viewClass = 'Xml';
         $View = $Controller->createView();
         $result = $View->render();
 
-        $expected = '<response><tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags></response>';
-        $this->assertContains($expected, $result);
+        $expected = Xml::build(['response' => ['tags' => $data['tags']]], $data['_xmlOptions'])->asXML();
+        $this->assertSame($expected, $result);
     }
 
     /**
-     * Test that rendering with _serialize errors when using string for '_serialize'
+     * Test that rendering with _serialize can work with string setting.
      *
-     * @expectedException Exception
      * @return void
      */
-    public function testRenderSerializeWithStringError()
+    public function testRenderSerializeWithString()
     {
         $Request = new Request();
         $Response = new Response();
         $Controller = new Controller($Request, $Response);
-        $Controller->set([
+        $data = [
             '_serialize' => 'tags',
             '_xmlOptions' => ['format' => 'attributes'],
             'tags' => [
-                'tag' => [
-                    [
-                        'id' => '1',
-                        'name' => 'defect'
-                    ],
-                    [
-                        'id' => '2',
-                        'name' => 'enhancement'
+                'tags' => [
+                    'tag' => [
+                        [
+                            'id' => '1',
+                            'name' => 'defect'
+                        ],
+                        [
+                            'id' => '2',
+                            'name' => 'enhancement'
+                        ]
                     ]
                 ]
             ]
-        ]);
+        ];
+        $Controller->set($data);
         $Controller->viewClass = 'Xml';
         $View = $Controller->createView();
         $result = $View->render();
 
-        $expected = '<tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags>';
-        $this->assertContains($expected, $result);
+        $expected = Xml::build($data['tags'], $data['_xmlOptions'])->asXML();
+        $this->assertSame($expected, $result);
     }
 
     /**
