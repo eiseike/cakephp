@@ -132,7 +132,7 @@ class XmlView extends View
      * Serialize view vars.
      *
      * ### Special parameters
-     * `_xmlOptions` You can set an array of custom options for json_encode() this way, e.g.
+     * `_xmlOptions` You can set an array of custom options for Xml::fromArray() this way, e.g.
      *   'format' as 'attribute' instead of 'tags'.
      *
      * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized
